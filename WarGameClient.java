@@ -15,7 +15,7 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 	boolean boolean_ReadyBtnStatus;
 	boolean boolean_HitBtnStatus;
 	boolean boolean_DropBtnStatus;
-	
+	WarGameGUI gui;
 	protected WarGameClient(WarGame wg,String id,String pw){
 		boolean_ReadyBtnStatus=false;
 		boolean_HitBtnStatus=false;
@@ -38,11 +38,27 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 		}
 		
 	}
-
+//	void drop() {
+//		boolean_DropBtnStatus=gui.returnDropBtnStatus();
+//		try {
+//			server.doDrop(id);//id가 필요한지 모르겠음... 
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//	}
+//	void hit() {
+//		boolean_HitBtnStatus=gui.returnHitBtnStatus();
+//		try {
+//			server.doHit(id);
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 	public void run() {
 		if(chkLog) {
 			System.out.println(id);
-			WarGameGUI gui=new WarGameGUI(id);
+			gui=new WarGameGUI(id);
 			try {
 				while(server.checkAllReady()==false) {
 					boolean_ReadyBtnStatus=gui.returnReadyBtnStatus();
@@ -56,13 +72,25 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 			gui.setGameInfo("game start");
 			gui.deactivateReadyBtn();
 			
-//			try {
-//				do{//게임중... do while인 이유는 마지막 카드가 공격이어서 기회가 남아 있을수도 있다..
-//					////////////////////
-//				}while(server.checkStatus());
-//			}catch(Exception e) {//디테일하게 예외 잡아 줘야 할 듯..예외처리 사이즈가 커 
-//				e.printStackTrace();
-//			}
+			try {
+				do{//게임중... do while인 이유는 마지막 카드가 공격이어서 기회가 남아 있을수도 있다..
+					while(id==server.whosTurn()) {//자신의 턴 동안...
+						boolean_DropBtnStatus=gui.returnDropBtnStatus();
+						boolean_HitBtnStatus=gui.returnHitBtnStatus();
+						if(boolean_DropBtnStatus) {
+							server.doDrop(id);//id는 안쓰고, serverImpl에서 turn보고 알아서 판단하고 있음. 필요 없는거 확실해지면 그때 지우기.
+							//server.changeTurn();
+						}else if(boolean_HitBtnStatus) {
+							server.doHit(id);
+							
+						}else {
+							
+						}
+					}
+				}while(server.checkEndingStatus());
+			}catch(Exception e) {//디테일하게 예외 잡아 줘야 할 듯..예외처리 사이즈가 커 
+				e.printStackTrace();
+			}
 		}
 	}
 	public static void main(String[] args) {
