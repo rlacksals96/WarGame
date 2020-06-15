@@ -1,5 +1,6 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
  public interface WarGame extends Remote{
 	 //public void func() throws RemoteException;
 	 boolean checkClientCredentials(WarGame wg,String id,String password) throws RemoteException;
@@ -15,4 +16,7 @@ import java.rmi.RemoteException;
 	 //가독성을 높이
 	 String whosTurn() throws RemoteException;//누구턴인지 알려줌 
 	 void changeTurn() throws RemoteException;
+	 void sendMsg(String msg) throws RemoteException;//client가 서버에게 메시지를 보내는 역할을 한다.
+	 String receiveMsg() throws RemoteException;//client입장에서 서버로부터 메지시를 받는 역할을 한다.
+	 ArrayList<String> getClientList() throws RemoteException;
 }

@@ -15,6 +15,7 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
 //	private ArrayList<WarGame> clientList;
 	private Game game;
 	private boolean turn=true;
+	private String msg;
 	private ArrayList<Card> deck0,deck1,deck2;
 	private int clientCnt=0;
 	//private HashMap<String,Integer> clientStatus;//어떤 클라이언트의 순서인지 확인할 수 있다(이름,0)/(이름,1) -> 전자는 비활성화, 후자는 활성화
@@ -24,6 +25,7 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
 	protected WarGameImpl() throws RemoteException{
 		super();
 		//clientList=new ArrayList<WarGame>();
+		msg="";
 		game=new Game();
 		deck1=game.returnDeck1();
 		deck2=game.returnDeck2();
@@ -59,6 +61,18 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
 //		 //this will be coded in client side
 //	 }
 	@Override
+	public ArrayList<String> getClientList() throws RemoteException{
+		return client;
+	}
+	@Override
+	public synchronized void sendMsg(String msg) throws RemoteException{
+		this.msg=msg;
+	}
+	@Override
+	public synchronized String receiveMsg() throws RemoteException{
+		return msg;
+	}
+	@Override
 	 public int checkGameStatus() throws RemoteException {
 		// TODO Auto-generated method st
 		String value=deck0.get(0).returnValue();
@@ -82,7 +96,7 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
 			 return true;
 	 }
 	 public String whosTurn() throws RemoteException{ 
-		if(turn)
+		if(turn==true)
 			return client.get(0);
 		else
 			return client.get(1);
