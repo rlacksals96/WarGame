@@ -44,7 +44,21 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
 //      boolean_readyStatus[1]=false;
       //System.out.println(deck1);//test
    }
-   
+   public boolean getDeckZeroStatus() throws RemoteException{
+	   if(deck0.size()==0)
+		   return false;
+	   else
+		   return true;
+   }
+   public String getTopType() throws RemoteException{
+//	   if(deck0.size()>0)
+		   return deck0.get(deck0.size()-1).returnType();
+//	   else
+//		   return null;
+   }
+   public String getTopValue() throws RemoteException{
+	   return deck0.get(deck0.size()-1).returnValue();
+   }
    public synchronized boolean checkClientCredentials(WarGame wg,String id,String password) throws RemoteException{   //id, pw 확인
       boolean checkLog=false;
       for(int i=0;i<clientID.length;i++) {
@@ -276,80 +290,153 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
           }
        }
     }
+//    public synchronized void doHit(String id) throws RemoteException{
+//       System.out.println("hit이 실행됨");            //플레이어 구분해서 해야하는데 아직 못함.
+//       int who = -1;
+//       for(int i = 0; i < client.size(); i++) {
+//          if(id.equals(client.get(i))) {
+//             who = i+1;
+//             break;
+//          }
+//       }
+//       Card []c=new Card[2];
+//       if(deck0.size() < 2) {            
+//          System.out.println("Hit Fail...");
+//          if(who == 1){
+//             for(int j = 0; j < deck0.size();j++) {
+//                deck2.add(deck0.get(j));
+//             }
+//             deck0 = new ArrayList<Card>();
+//             turn = false;
+//          }
+//          else if(who == 2){
+//             for(int j = 0; j < deck0.size();j++) {
+//                deck1.add(deck0.get(j));
+//             }
+//             deck0 = new ArrayList<Card>();
+//             turn = true;
+//          }
+//          
+//          System.out.println("aaa의 카드 수 : "+deck1.size());
+//          System.out.println("bbb의 카드 수 : "+deck2.size());
+//          System.out.println("깔려 있는 카드 수 :"+deck0.size());
+//       }
+//       else {
+//          c[0]=deck0.get(deck0.size()-2);
+//          c[1]=deck0.get(deck0.size()-1);
+//          if(c[0].returnType()==c[1].returnType()) {
+//             if(who == 1) {
+//                for(int j = 0; j < deck0.size();j++) {
+//                   deck1.add(deck0.get(j));
+//                }
+//                deck0 = new ArrayList<Card>();
+//                turn = true;
+//             }
+//             else if(who == 2) {
+//                for(int j = 0; j < deck0.size();j++) {
+//                   deck2.add(deck0.get(j));
+//                }
+//                deck0 = new ArrayList<Card>();
+//                turn = false;
+//             }
+//          }
+//          else {
+//             System.out.println("Hit Fail...");
+//             if(who == 1){
+//                for(int j = 0; j < deck0.size();j++) {
+//                   deck2.add(deck0.get(j));
+//                }
+//                deck0 = new ArrayList<Card>();
+//                turn = false;
+//             }
+//             else if(who == 2){
+//                for(int j = 0; j < deck0.size();j++) {
+//                   deck1.add(deck0.get(j));
+//                }
+//                deck0 = new ArrayList<Card>(); 
+//                turn = true;
+//             }
+//          }
+//          System.out.println("aaa의 카드 수 : "+deck1.size());
+//          System.out.println("bbb의 카드 수 : "+deck2.size());
+//          System.out.println("깔려 있는 카드 수 :"+deck0.size());
+//          
+//       }
+//    }
     public synchronized void doHit(String id) throws RemoteException{
-       System.out.println("hit이 실행됨");            //플레이어 구분해서 해야하는데 아직 못함.
-       int who = -1;
-       for(int i = 0; i < client.size(); i++) {
-          if(id.equals(client.get(i))) {
-             who = i+1;
-             break;
-          }
-       }
-       Card []c=new Card[2];
-       if(deck0.size() < 2) {            
-          System.out.println("Hit Fail...");
-          if(who == 1){
-             for(int j = 0; j < deck0.size();j++) {
-                deck2.add(deck0.get(j));
-             }
-             deck0 = new ArrayList<Card>();
-             turn = false;
-          }
-          else if(who == 2){
-             for(int j = 0; j < deck0.size();j++) {
-                deck1.add(deck0.get(j));
-             }
-             deck0 = new ArrayList<Card>();
-             turn = true;
-          }
-          
-          System.out.println("aaa의 카드 수 : "+deck1.size());
-          System.out.println("bbb의 카드 수 : "+deck2.size());
-          System.out.println("깔려 있는 카드 수 :"+deck0.size());
-       }
-       else {
-          c[0]=deck0.get(deck0.size()-2);
-          c[1]=deck0.get(deck0.size()-1);
-          if(c[0].returnType()==c[1].returnType()) {
-             if(who == 1) {
-                for(int j = 0; j < deck0.size();j++) {
-                   deck1.add(deck0.get(j));
-                }
-                deck0 = new ArrayList<Card>();
-                turn = true;
-             }
-             else if(who == 2) {
-                for(int j = 0; j < deck0.size();j++) {
-                   deck2.add(deck0.get(j));
-                }
-                deck0 = new ArrayList<Card>();
-                turn = false;
-             }
-          }
-          else {
-             System.out.println("Hit Fail...");
-             if(who == 1){
-                for(int j = 0; j < deck0.size();j++) {
-                   deck2.add(deck0.get(j));
-                }
-                deck0 = new ArrayList<Card>();
-                turn = false;
-             }
-             else if(who == 2){
-                for(int j = 0; j < deck0.size();j++) {
-                   deck1.add(deck0.get(j));
-                }
-                deck0 = new ArrayList<Card>(); 
-                turn = true;
-             }
-          }
-          System.out.println("aaa의 카드 수 : "+deck1.size());
-          System.out.println("bbb의 카드 수 : "+deck2.size());
-          System.out.println("깔려 있는 카드 수 :"+deck0.size());
-          
-       }
-    }
-    
+        System.out.println("hit이 실행됨");            //플레이어 구분해서 해야하는데 아직 못함.
+        int who = -1;
+        for(int i = 0; i < client.size(); i++) {
+           if(id.equals(client.get(i))) {
+              who = i+1;
+              break;
+           }
+        }
+        Card []c=new Card[2];
+        if(deck0.size() < 2) {            
+           System.out.println("Hit Fail...");
+           if(who == 1){
+              for(int j = 0; j < deck0.size();j++) {
+                 deck2.add(deck0.get(j));
+              }
+              deck0 = new ArrayList<Card>();
+              turn = false;
+           }
+           else if(who == 2){
+              for(int j = 0; j < deck0.size();j++) {
+                 deck1.add(deck0.get(j));
+              }
+              deck0 = new ArrayList<Card>();
+              turn = true;
+           }
+           
+           System.out.println("aaa의 카드 수 : "+deck1.size());
+           System.out.println("bbb의 카드 수 : "+deck2.size());
+           System.out.println("깔려 있는 카드 수 :"+deck0.size());
+        }
+        else {
+           c[0]=deck0.get(deck0.size()-2);
+           c[1]=deck0.get(deck0.size()-1);
+           if(c[0].returnType()==c[1].returnType()) {
+              System.out.println("Hit Fail...");
+              if(who == 1) {
+                 for(int j = 0; j < deck0.size();j++) {
+                    deck1.add(deck0.get(j));
+                 }
+                 deck0 = new ArrayList<Card>();
+                 turn = true;
+              }
+              else if(who == 2) {
+                 for(int j = 0; j < deck0.size();j++) {
+                    deck2.add(deck0.get(j));
+                 }
+                 deck0 = new ArrayList<Card>();
+                 turn = false;
+              }
+           }
+           else {
+              System.out.println("Hit Fail...");
+              if(who == 1){
+                 for(int j = 0; j < deck0.size();j++) {
+                    deck2.add(deck0.get(j));
+                 }
+                 deck0 = new ArrayList<Card>();
+                 turn = false;
+              }
+              else if(who == 2){
+                 for(int j = 0; j < deck0.size();j++) {
+                    deck1.add(deck0.get(j));
+                 }
+                 deck0 = new ArrayList<Card>(); 
+                 turn = true;
+              }
+           }
+           System.out.println("aaa의 카드 수 : "+deck1.size());
+           System.out.println("bbb의 카드 수 : "+deck2.size());
+           System.out.println("깔려 있는 카드 수 :"+deck0.size());
+           
+        }
+     }
     public void pop() {
        if(turn==true) {
           deck1.remove(0);

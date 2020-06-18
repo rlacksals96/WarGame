@@ -20,4 +20,7 @@ import java.util.ArrayList;
 	 String receiveMsg() throws RemoteException;//client입장에서 서버로부터 메지시를 받는 역할을 한다.
 	 ArrayList<String> getClientList() throws RemoteException;
 	 int getDeckLength(int player) throws RemoteException;
+	 String getTopType() throws RemoteException;
+	 String getTopValue() throws RemoteException;
+	 boolean getDeckZeroStatus() throws RemoteException;
 }

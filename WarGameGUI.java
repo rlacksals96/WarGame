@@ -23,7 +23,7 @@ class WarGameBoard extends JPanel{
 	ImageIcon icon;
 	JButton dropBtn;
 	JButton hitBtn;
- 
+	CardGUI []cardGUI;
 	public WarGameBoard() {
 		setLayout(null);
 
@@ -34,35 +34,58 @@ class WarGameBoard extends JPanel{
 		frontSideCard=new ImageIcon[52];
 		String address="img/trumpCard/";
 		String tmp=null;
+//		for(int i=1;i<10;i++) {
+//			tmp=address+(i+1)+"S"+".png";
+//			frontSideCard[13*0+i]=new ImageIcon(tmp);
+//			tmp=address+(i+1)+"D"+".png";
+//			frontSideCard[13*1+i]=new ImageIcon(tmp);
+//			tmp=address+(i+1)+"H"+".png";
+//			frontSideCard[13*2+i]=new ImageIcon(tmp);
+//			tmp=address+(i+1)+"C"+".png";
+//			frontSideCard[13*3+i]=new ImageIcon(tmp);
+//		}
+		cardGUI=new CardGUI[52];
 		for(int i=1;i<10;i++) {
-			tmp=address+(i+1)+"S"+".png";
-			frontSideCard[13*0+i]=new ImageIcon(tmp);
-			tmp=address+(i+1)+"D"+".png";
-			frontSideCard[13*1+i]=new ImageIcon(tmp);
-			tmp=address+(i+1)+"H"+".png";
-			frontSideCard[13*2+i]=new ImageIcon(tmp);
-			tmp=address+(i+1)+"C"+".png";
-			frontSideCard[13*3+i]=new ImageIcon(tmp);
+			cardGUI[13*0+i]=new CardGUI("S",i);
+			cardGUI[13*1+i]=new CardGUI("D",i);
+			cardGUI[13*2+i]=new CardGUI("H",i);
+			cardGUI[13*3+i]=new CardGUI("C",i);
 		}
-		frontSideCard[13*0+0]=new ImageIcon("img/trumpCard/AS.png");
-		frontSideCard[13*1+0]=new ImageIcon("img/trumpCard/AD.png");
-		frontSideCard[13*2+0]=new ImageIcon("img/trumpCard/AH.png");
-		frontSideCard[13*3+0]=new ImageIcon("img/trumpCard/AC.png");
+		cardGUI[13*0+0]=new CardGUI("S","A");//type,value
+		cardGUI[13*1+0]=new CardGUI("D","A");//type,value
+		cardGUI[13*2+0]=new CardGUI("H","A");//type,value
+		cardGUI[13*3+0]=new CardGUI("C","A");//type,value
+//		frontSideCard[13*0+0]=new ImageIcon("img/trumpCard/AS.png");
+//		frontSideCard[13*1+0]=new ImageIcon("img/trumpCard/AD.png");
+//		frontSideCard[13*2+0]=new ImageIcon("img/trumpCard/AH.png");
+//		frontSideCard[13*3+0]=new ImageIcon("img/trumpCard/AC.png");
+		cardGUI[13*0+10]=new CardGUI("S","J");//type,value
+		cardGUI[13*1+10]=new CardGUI("D","J");//type,value
+		cardGUI[13*2+10]=new CardGUI("H","J");//type,value
+		cardGUI[13*3+10]=new CardGUI("C","J");//type,value
+//		frontSideCard[13*0+10]=new ImageIcon("img/trumpCard/JS.png");
+//		frontSideCard[13*1+10]=new ImageIcon("img/trumpCard/JD.png");
+//		frontSideCard[13*2+10]=new ImageIcon("img/trumpCard/JH.png");
+//		frontSideCard[13*3+10]=new ImageIcon("img/trumpCard/JC.png");
+		cardGUI[13*0+11]=new CardGUI("S","Q");
+		cardGUI[13*1+11]=new CardGUI("D","Q");
+		cardGUI[13*2+11]=new CardGUI("H","Q");
+		cardGUI[13*3+11]=new CardGUI("C","Q");
 
-		frontSideCard[13*0+10]=new ImageIcon("img/trumpCard/JS.png");
-		frontSideCard[13*1+10]=new ImageIcon("img/trumpCard/JD.png");
-		frontSideCard[13*2+10]=new ImageIcon("img/trumpCard/JH.png");
-		frontSideCard[13*3+10]=new ImageIcon("img/trumpCard/JC.png");
+//		frontSideCard[13*0+11]=new ImageIcon("img/trumpCard/QS.png");
+//		frontSideCard[13*1+11]=new ImageIcon("img/trumpCard/QD.png");
+//		frontSideCard[13*2+11]=new ImageIcon("img/trumpCard/QH.png");
+//		frontSideCard[13*3+11]=new ImageIcon("img/trumpCard/QC.png");
 
-		frontSideCard[13*0+11]=new ImageIcon("img/trumpCard/QS.png");
-		frontSideCard[13*1+11]=new ImageIcon("img/trumpCard/QD.png");
-		frontSideCard[13*2+11]=new ImageIcon("img/trumpCard/QH.png");
-		frontSideCard[13*3+11]=new ImageIcon("img/trumpCard/QC.png");
+		cardGUI[13*0+12]=new CardGUI("S","K");
+		cardGUI[13*1+12]=new CardGUI("D","K");
+		cardGUI[13*2+12]=new CardGUI("H","K");
+		cardGUI[13*3+12]=new CardGUI("C","K");
 
-		frontSideCard[13*0+12]=new ImageIcon("img/trumpCard/KS.png");
-		frontSideCard[13*1+12]=new ImageIcon("img/trumpCard/KD.png");
-		frontSideCard[13*2+12]=new ImageIcon("img/trumpCard/KH.png");
-		frontSideCard[13*3+12]=new ImageIcon("img/trumpCard/KC.png");
+//		frontSideCard[13*0+12]=new ImageIcon("img/trumpCard/KS.png");
+//		frontSideCard[13*1+12]=new ImageIcon("img/trumpCard/KD.png");
+//		frontSideCard[13*2+12]=new ImageIcon("img/trumpCard/KH.png");
+//		frontSideCard[13*3+12]=new ImageIcon("img/trumpCard/KC.png");
 
 
 
@@ -93,6 +116,11 @@ class WarGameBoard extends JPanel{
 
 
 	}
+	void updateCardImg(String type,String value) {
+		playerCard=findImg(type,value);
+		repaint();
+		
+	}
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		playerCard.paintIcon(this,g,200,50);
@@ -100,6 +128,13 @@ class WarGameBoard extends JPanel{
 	void setCardNumLabel(int p,int num) {
 		cardNumLabel[p].setText(""+num);
 		
+	}
+	ImageIcon findImg(String type,String value) {
+		for(int i=0;i<cardGUI.length;i++) {
+			if(cardGUI[i].returnType().equals(type) && cardGUI[i].returnValue().equals(value))
+				return cardGUI[i].returnImg();
+		}
+			return new ImageIcon("img/trumpCard/red_back.png");
 	}
 	
 }
@@ -148,7 +183,7 @@ public class WarGameGUI extends JFrame implements ActionListener{
         hitBtn.setText("Hit");
         hitBtn.setName("hitBtn");
 
-        hitBtn.setBounds(120,420,157,82);
+        hitBtn.setBounds(120,560,157,82);
         ct.add(hitBtn);
         hitBtn.addActionListener(this);
 
@@ -158,7 +193,7 @@ public class WarGameGUI extends JFrame implements ActionListener{
         dropBtn.setText("Drop");
         dropBtn.setName("dropBtn");
 
-        dropBtn.setBounds(300,420,157,82);
+        dropBtn.setBounds(300,560,157,82);
         ct.add(dropBtn);
         dropBtn.addActionListener(this);
 
@@ -205,7 +240,7 @@ public class WarGameGUI extends JFrame implements ActionListener{
 //		tf_Send.addActionListener(this);
 		ta_msgView.append("press ready to play game\n");
 		
-		this.setSize(880,650);
+		this.setSize(880,690);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -214,6 +249,9 @@ public class WarGameGUI extends JFrame implements ActionListener{
 		//playerLabel[0],[1]
 	public void setCardNumLabel(int p,int num) {
 		board.setCardNumLabel(p, num);
+	}
+	public void updateCardImg(String type,String value) {
+		board.updateCardImg(type, value);
 	}
 	public String returnID() {
 		return id;
@@ -297,4 +335,37 @@ public class WarGameGUI extends JFrame implements ActionListener{
     	}
     }
 	
+}
+class CardGUI{
+	String type;
+	String value;
+	ImageIcon img;
+	String address="img/trumpCard/";
+	String tmp=null;
+	CardGUI(String type,String value){
+		this.type=type;
+		this.value=value;
+		tmp=address+value+type+".png";
+		img=new ImageIcon(tmp);
+//				new ImageIcon("img/trumpCard/QH.png");
+//				tmp=address+(i+1)+"S"+".png";
+	}
+	CardGUI(String type,int value){
+//		String tmp=Integer.toString(value);
+		this.type=type;
+		value=value+1;
+		this.value=Integer.toString(value);
+		
+		tmp=address+value+type+".png";
+		img=new ImageIcon(tmp);
+	}
+	String returnType() {
+		return type;
+	}
+	String returnValue() {
+		return value;
+	}
+	ImageIcon returnImg() {
+		return img;
+	}
 }

@@ -24,6 +24,7 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 	boolean boolean_ReadyBtnStatus;
 	boolean boolean_HitBtnStatus;
 	boolean boolean_DropBtnStatus;
+	Card top;
 	ArrayList<String> client;
 	WarGameGUI gui;
 	protected WarGameClient(WarGame wg,String id,String pw){
@@ -110,11 +111,39 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 //			}
 			try {
 				while(server.checkEndingStatus()){//게임중... 
-					int deckOneLength=server.getDeckLength(0);//get deck length of player1
-					int deckTwoLength=server.getDeckLength(1);//get deck length of player2
-					gui.setCardNumLabel(0, deckOneLength);
-					gui.setCardNumLabel(1,deckTwoLength);
+//					int deckOneLength=server.getDeckLength(0);//get deck length of player1
+//					int deckTwoLength=server.getDeckLength(1);//get deck length of player2
+					gui.setCardNumLabel(0, server.getDeckLength(0));
+//					gui.setCardNumLabel(1,server.getDeckLength(1));
+//					top=server.getTop();
+//					if(top!=null)
+//						gui.updateCardImg(top.returnType(), top.returnValue());
+					if(server.getDeckZeroStatus()) {
+//						top=server.getTop();
+//						gui.updateCardImg(top.returnType(),top.returnValue());
+						String topType=server.getTopType();
+						String topValue=server.getTopValue();
+						gui.updateCardImg(topType, topValue);
+//						System.out.println(topType);
+//						System.out.println(topValue);
+					}
 					while(id.equals(server.whosTurn())){//자신의 턴 동안...
+						gui.setCardNumLabel(0, server.getDeckLength(0));
+						gui.setCardNumLabel(1,server.getDeckLength(1));
+						
+//						top=server.getTop();
+//						if(top!=null)
+//							gui.updateCardImg(top.returnType(), top.returnValue());
+//						
+						if(server.getDeckZeroStatus()) {//바닥에 카드가 있을때만 작동 
+//							top=server.getTop();
+//							gui.updateCardImg(top.returnType(),top.returnValue());
+							String topType=server.getTopType();
+							String topValue=server.getTopValue();
+							gui.updateCardImg(topType, topValue);
+//							System.out.println(topType);
+//							System.out.println(topValue);
+						}
 						boolean_DropBtnStatus=gui.returnDropBtnStatus();
 						boolean_HitBtnStatus=gui.returnHitBtnStatus();
 						if(boolean_DropBtnStatus) {
@@ -142,8 +171,9 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 							gui.setDropStatusFalse();
 						}
 						if(boolean_HitBtnStatus){
-							System.out.println("it's not your turn..please wait");
-							gui.setGameInfo("it's not your turn..please wait");
+//							System.out.println("it's not your turn..please wait");
+//							gui.setGameInfo("it's not your turn..please wait");
+							hit();
 							gui.setHitStatusFalse();
 						}
 					}
