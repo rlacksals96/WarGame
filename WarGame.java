@@ -19,4 +19,5 @@ import java.util.ArrayList;
 	 void sendMsg(String msg) throws RemoteException;//client가 서버에게 메시지를 보내는 역할을 한다.
 	 String receiveMsg() throws RemoteException;//client입장에서 서버로부터 메지시를 받는 역할을 한다.
 	 ArrayList<String> getClientList() throws RemoteException;
+	 int getDeckLength(int player) throws RemoteException;
 }
