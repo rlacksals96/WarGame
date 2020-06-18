@@ -126,6 +126,8 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 						gui.updateCardImg(topType, topValue);
 //						System.out.println(topType);
 //						System.out.println(topValue);
+					}else {
+						gui.updateCardImg();//아무것도 없는 경우 뒷장 보이게 함
 					}
 					while(id.equals(server.whosTurn())){//자신의 턴 동안...
 						gui.setCardNumLabel(0, server.getDeckLength(0));

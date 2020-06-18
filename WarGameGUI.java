@@ -121,6 +121,10 @@ class WarGameBoard extends JPanel{
 		repaint();
 		
 	}
+	void updateCardImg() {
+		playerCard=new ImageIcon("img/trumpCard/red_back.png");
+		repaint();
+	}
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		playerCard.paintIcon(this,g,200,50);
@@ -252,6 +256,9 @@ public class WarGameGUI extends JFrame implements ActionListener{
 	}
 	public void updateCardImg(String type,String value) {
 		board.updateCardImg(type, value);
+	}
+	public void updateCardImg() {
+		board.updateCardImg();
 	}
 	public String returnID() {
 		return id;
