@@ -27,6 +27,7 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
    
    private boolean isAttack = false;
    private int dropCount = 0;
+   private int whoIsWin=0;
    
    protected WarGameImpl() throws RemoteException{
       super();
@@ -45,11 +46,28 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
       //System.out.println(deck1);//test
    }
    public boolean getDeckZeroStatus() throws RemoteException{
-	   if(deck0.size()==0)
+	   if(deck0.isEmpty())
 		   return false;
-	   else
+	   else {
+		   System.out.println(deck0.size());
 		   return true;
+	   }
    }
+   public void refreshDeck(int who) throws RemoteException{
+       if(who == 2) {
+          for(int i = 0; i < deck0.size(); i++) {
+             deck2.add(deck0.get(i));
+          }
+          deck0 = new ArrayList<Card>();
+       }
+       else if(who == 1) {
+           for(int i = 0; i < deck0.size(); i++) {
+              deck1.add(deck0.get(i));
+           }
+           deck0 = new ArrayList<Card>();
+       }
+       
+    }
    public String getTopType() throws RemoteException{
 //	   if(deck0.size()>0)
 		   return deck0.get(deck0.size()-1).returnType();
@@ -118,9 +136,22 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
          return -1;//평시 상태
       }
    }
-    public boolean checkEndingStatus() throws RemoteException{   //deck이 비면 끝남
-       if(deck1.isEmpty()==true || deck2.isEmpty()==true)
+//    public boolean checkEndingStatus() throws RemoteException{   //deck이 비면 끝남
+//       if(deck1.isEmpty()==true || deck2.isEmpty()==true)
+//          return false;//game over
+//       else 
+//          return true;
+//    }
+   public boolean checkEndingStatus() throws RemoteException{   //deck이 비면 끝남
+       if(deck1.isEmpty()==true || deck2.isEmpty()==true) {
+          if(deck1.isEmpty()) {
+             whoIsWin = 2;
+          }
+          else if(deck2.isEmpty()) {
+             whoIsWin = 1;
+          }
           return false;//game over
+       }
        else 
           return true;
     }
@@ -168,128 +199,132 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
        else
           return false;
     }
-    public synchronized void doDrop(String id) throws RemoteException{
-       
-       Card c=null;
-       if(turn==true) {//player 1's drop
-          if(isAttack == false) {
-             System.out.println("player 1 drop!");
-             if(deck1.size() == 0) {
-                System.out.println("Player2 win!!");
-                return;
-             }
-             c=deck1.get(0);
-             pop();   //가져온 카드 1개 제거
-
-             deck0.add(c);
-             attackCount = checkGameStatus();
-             if(attackCount == -1) {
-                turn = !turn;
-             }
-             else {
-                isAttack = true;
-                turn = !turn;
-             }
-             
-             System.out.println("뽑힌카드 : " +c);
-          }
-          else if(isAttack == true) {      //공격 상태일 때
-             System.out.println("player 1 drop! : Attack");
-             if(deck1.size() == 0) {
-                System.out.println("Player2 win!!");
-                return;
-             }
-             c=deck1.get(0);
-             pop();   //가져온 카드 1개 제거
-
-             deck0.add(c);
-             if(checkGameStatus() == -1) {   //공격카드가 아닐 경우
-                dropCount++;   
-                System.out.println("AttackCount: "+attackCount+ ", DropCount: "+dropCount);
-                
-                if(dropCount == attackCount) {   //낸 카드의 수가 조건을 넘어갔을 떄
-                   dropCount = 0;
-                   isAttack = false;
-                   for(int i = 0; i < deck0.size(); i++) {
-                      deck2.add(deck0.get(i));
-                   }
-                   deck0 = new ArrayList<Card>();
-                   turn = !turn;
-                   
-                   System.out.println("aaa의 카드 수 : "+deck1.size());
-                   System.out.println("bbb의 카드 수 : "+deck2.size());
-                   System.out.println("깔려 있는 카드 수 :"+deck0.size());
-                   
-                }
-             }
-             else {
-                isAttack = true;
-                dropCount = 0;
-                attackCount = checkGameStatus();
-                turn = !turn;
-             }
-             System.out.println("뽑힌카드 : " +c);
-          }
-         
-       }else {//player 2's drop
-          if(isAttack == false) {
-             System.out.println("player 2 drop!");
-             if(deck2.size() == 0) {
-                System.out.println("Player1 win!!");
-                return;
-             }
-             c=deck2.get(0);
-             pop();   //가져온 카드 1개 제거
-
-             deck0.add(c);
-             attackCount = checkGameStatus();
-             if(attackCount == -1) {
-                turn = !turn;
-             }
-             else {
-                isAttack = true;
-                turn = !turn;
-             }
-             
-             System.out.println("뽑힌카드 : " +c);
-          }
-          else if(isAttack == true) {      //공격 상태일 때
-             System.out.println("player 2 drop! : Attack");
-             if(deck2.size() == 0) {
-                System.out.println("Player1 win!!");
-                return;
-             }
-             c=deck2.get(0);
-             pop();
-             
-             deck0.add(c);
-             
-             if(checkGameStatus() == -1) {   //공격카드가 아닐 경우
-                dropCount++;      
-                System.out.println("AttackCount: "+attackCount+ ", DropCount: "+dropCount);
-                if(dropCount == attackCount) {   //낸 카드의 수가 조건을 넘어갔을 떄
-                   dropCount = 0;
-                   isAttack = false;
-                   for(int i = 0; i < deck0.size(); i++) {
-                      deck1.add(deck0.get(i));
-                   }
-                   deck0 = new ArrayList<Card>();
-                   turn = !turn;
-                   System.out.println("aaa의 카드 수 : "+deck1.size());
-                   System.out.println("bbb의 카드 수 : "+deck2.size());
-                   System.out.println("깔려 있는 카드 수 :"+deck0.size());
-                }
-             }
-             else {
-                isAttack = true;
-                dropCount = 0;
-                attackCount = checkGameStatus();
-                turn = !turn;
-             }
-             System.out.println("뽑힌카드 : " +c);
-          }
-       }
-    }
+    public int whosWin() throws RemoteException {
+        return whoIsWin;
+     }
+//    public synchronized void doDrop(String id) throws RemoteException{
+//       
+//       Card c=null;
+//       if(turn==true) {//player 1's drop
+//          if(isAttack == false) {
+//             System.out.println("player 1 drop!");
+//             if(deck1.size() == 0) {
+//                System.out.println("Player2 win!!");
+//                return;
+//             }
+//             c=deck1.get(0);
+//             pop();   //가져온 카드 1개 제거
+//
+//             deck0.add(c);
+//             attackCount = checkGameStatus();
+//             if(attackCount == -1) {
+//                turn = !turn;
+//             }
+//             else {
+//                isAttack = true;
+//                turn = !turn;
+//             }
+//             
+//             System.out.println("뽑힌카드 : " +c);
+//          }
+//          else if(isAttack == true) {      //공격 상태일 때
+//             System.out.println("player 1 drop! : Attack");
+//             if(deck1.size() == 0) {
+//                System.out.println("Player2 win!!");
+//                return;
+//             }
+//             c=deck1.get(0);
+//             pop();   //가져온 카드 1개 제거
+//
+//             deck0.add(c);
+//             if(checkGameStatus() == -1) {   //공격카드가 아닐 경우
+//                dropCount++;   
+//                System.out.println("AttackCount: "+attackCount+ ", DropCount: "+dropCount);
+//                
+//                if(dropCount == attackCount) {   //낸 카드의 수가 조건을 넘어갔을 떄
+//                   dropCount = 0;
+//                   isAttack = false;
+//                   for(int i = 0; i < deck0.size(); i++) {
+//                      deck2.add(deck0.get(i));
+//                   }
+//                   deck0 = new ArrayList<Card>();
+//                   turn = !turn;
+//                   
+//                   System.out.println("aaa의 카드 수 : "+deck1.size());
+//                   System.out.println("bbb의 카드 수 : "+deck2.size());
+//                   System.out.println("깔려 있는 카드 수 :"+deck0.size());
+//                   
+//                }
+//             }
+//             else {
+//                isAttack = true;
+//                dropCount = 0;
+//                attackCount = checkGameStatus();
+//                turn = !turn;
+//             }
+//             System.out.println("뽑힌카드 : " +c);
+//          }
+//         
+//       }else {//player 2's drop
+//          if(isAttack == false) {
+//             System.out.println("player 2 drop!");
+//             if(deck2.size() == 0) {
+//                System.out.println("Player1 win!!");
+//                return;
+//             }
+//             c=deck2.get(0);
+//             pop();   //가져온 카드 1개 제거
+//
+//             deck0.add(c);
+//             attackCount = checkGameStatus();
+//             if(attackCount == -1) {
+//                turn = !turn;
+//             }
+//             else {
+//                isAttack = true;
+//                turn = !turn;
+//             }
+//             
+//             System.out.println("뽑힌카드 : " +c);
+//          }
+//          else if(isAttack == true) {      //공격 상태일 때
+//             System.out.println("player 2 drop! : Attack");
+//             if(deck2.size() == 0) {
+//                System.out.println("Player1 win!!");
+//                return;
+//             }
+//             c=deck2.get(0);
+//             pop();
+//             
+//             deck0.add(c);
+//             
+//             if(checkGameStatus() == -1) {   //공격카드가 아닐 경우
+//                dropCount++;      
+//                System.out.println("AttackCount: "+attackCount+ ", DropCount: "+dropCount);
+//                if(dropCount == attackCount) {   //낸 카드의 수가 조건을 넘어갔을 떄
+//                   dropCount = 0;
+//                   isAttack = false;
+//                   for(int i = 0; i < deck0.size(); i++) {
+//                      deck1.add(deck0.get(i));
+//                   }
+//                   deck0 = new ArrayList<Card>();
+//                   turn = !turn;
+//                   System.out.println("aaa의 카드 수 : "+deck1.size());
+//                   System.out.println("bbb의 카드 수 : "+deck2.size());
+//                   System.out.println("깔려 있는 카드 수 :"+deck0.size());
+//                }
+//             }
+//             else {
+//                isAttack = true;
+//                dropCount = 0;
+//                attackCount = checkGameStatus();
+//                turn = !turn;
+//             }
+//             System.out.println("뽑힌카드 : " +c);
+//          }
+//       }
+//    }
+    
 //    public synchronized void doHit(String id) throws RemoteException{
 //       System.out.println("hit이 실행됨");            //플레이어 구분해서 해야하는데 아직 못함.
 //       int who = -1;
@@ -363,7 +398,213 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
 //          
 //       }
 //    }
-    public synchronized void doHit(String id) throws RemoteException{
+//    public synchronized void doHit(String id) throws RemoteException{
+//        System.out.println("hit이 실행됨");            //플레이어 구분해서 해야하는데 아직 못함.
+//        int who = -1;
+//        for(int i = 0; i < client.size(); i++) {
+//           if(id.equals(client.get(i))) {
+//              who = i+1;
+//              break;
+//           }
+//        }
+//        Card []c=new Card[2];
+//        if(deck0.size() < 2) {            
+//           System.out.println("Hit Fail...");
+//           if(who == 1){
+//              for(int j = 0; j < deck0.size();j++) {
+//                 deck2.add(deck0.get(j));
+//              }
+//              deck0 = new ArrayList<Card>();
+//              turn = false;
+//           }
+//           else if(who == 2){
+//              for(int j = 0; j < deck0.size();j++) {
+//                 deck1.add(deck0.get(j));
+//              }
+//              deck0 = new ArrayList<Card>();
+//              turn = true;
+//           }
+//           
+//           System.out.println("aaa의 카드 수 : "+deck1.size());
+//           System.out.println("bbb의 카드 수 : "+deck2.size());
+//           System.out.println("깔려 있는 카드 수 :"+deck0.size());
+//        }
+//        else {
+//           c[0]=deck0.get(deck0.size()-2);
+//           c[1]=deck0.get(deck0.size()-1);
+//           if(c[0].returnType()==c[1].returnType()) {
+//              System.out.println("Hit Fail...");
+//              if(who == 1) {
+//                 for(int j = 0; j < deck0.size();j++) {
+//                    deck1.add(deck0.get(j));
+//                 }
+//                 deck0 = new ArrayList<Card>();
+//                 turn = true;
+//              }
+//              else if(who == 2) {
+//                 for(int j = 0; j < deck0.size();j++) {
+//                    deck2.add(deck0.get(j));
+//                 }
+//                 deck0 = new ArrayList<Card>();
+//                 turn = false;
+//              }
+//           }
+//           else {
+//              System.out.println("Hit Fail...");
+//              if(who == 1){
+//                 for(int j = 0; j < deck0.size();j++) {
+//                    deck2.add(deck0.get(j));
+//                 }
+//                 deck0 = new ArrayList<Card>();
+//                 turn = false;
+//              }
+//              else if(who == 2){
+//                 for(int j = 0; j < deck0.size();j++) {
+//                    deck1.add(deck0.get(j));
+//                 }
+//                 deck0 = new ArrayList<Card>(); 
+//                 turn = true;
+//              }
+//           }
+//           System.out.println("aaa의 카드 수 : "+deck1.size());
+//           System.out.println("bbb의 카드 수 : "+deck2.size());
+//           System.out.println("깔려 있는 카드 수 :"+deck0.size());
+//           
+//        }
+//     }
+    public synchronized void doDrop(String id) throws RemoteException{
+        
+        Card c=null;
+        if(turn==true) {//player 1's drop
+           if(isAttack == false) {
+              System.out.println("player 1 drop!");
+              if(deck1.isEmpty()) {
+                 System.out.println("Player2 win!!");
+                 return;
+              }
+              c=deck1.get(0);
+              pop();   //가져온 카드 1개 제거
+
+              deck0.add(c);
+              
+              attackCount = checkGameStatus();
+              if(attackCount == -1) {
+                 turn = !turn;
+              }
+              else {
+                 isAttack = true;
+                 turn = !turn;
+              }
+              
+              System.out.println("뽑힌카드 : " +c);
+           }
+           else if(isAttack == true) {      //공격 상태일 때
+              System.out.println("player 1 drop! : Attack");
+              if(deck1.isEmpty()) {
+                 System.out.println("Player2 win!!");
+                 return;
+              }
+              c=deck1.get(0);
+              pop();   //가져온 카드 1개 제거
+
+              deck0.add(c);
+              if(deck1.isEmpty()) {
+                 return;
+              }
+              if(checkGameStatus() == -1) {   //공격카드가 아닐 경우
+                 dropCount++;   
+                 System.out.println("AttackCount: "+attackCount+ ", DropCount: "+dropCount);
+                 
+                 if(dropCount == attackCount) {   //낸 카드의 수가 조건을 넘어갔을 떄
+                    dropCount = 0;
+                    isAttack = false;
+                    for(int i = 0; i < deck0.size(); i++) {
+                       deck2.add(deck0.get(i));
+                    }
+                    deck0 = new ArrayList<Card>();
+                    turn = !turn;
+                    
+                    System.out.println("aaa의 카드 수 : "+deck1.size());
+                    System.out.println("bbb의 카드 수 : "+deck2.size());
+                    System.out.println("깔려 있는 카드 수 :"+deck0.size());
+                    
+                 }
+              }
+              else {
+                 isAttack = true;
+                 dropCount = 0;
+                 if(deck1.isEmpty()) {
+                    return;
+                 }
+                 attackCount = checkGameStatus();
+                 turn = !turn;
+              }
+              System.out.println("뽑힌카드 : " +c);
+           }
+          
+        }else {//player 2's drop
+           if(isAttack == false) {
+              System.out.println("player 2 drop!");
+              if(deck2.isEmpty()) {
+                 System.out.println("Player1 win!!");
+                 return;
+              }
+              c=deck2.get(0);
+              pop();   //가져온 카드 1개 제거
+
+              deck0.add(c);
+              attackCount = checkGameStatus();
+              if(attackCount == -1) {
+                 turn = !turn;
+              }
+              else {
+                 isAttack = true;
+                 turn = !turn;
+              }
+              
+              System.out.println("뽑힌카드 : " +c);
+           }
+           else if(isAttack == true) {      //공격 상태일 때
+              System.out.println("player 2 drop! : Attack");
+              if(deck2.isEmpty()) {
+                 System.out.println("Player1 win!!");
+                 return;
+              }
+              c=deck2.get(0);
+              pop();
+              
+              deck0.add(c);
+              
+              if(checkGameStatus() == -1) {   //공격카드가 아닐 경우
+                 dropCount++;      
+                 System.out.println("AttackCount: "+attackCount+ ", DropCount: "+dropCount);
+                 if(dropCount == attackCount) {   //낸 카드의 수가 조건을 넘어갔을 떄
+                    dropCount = 0;
+                    isAttack = false;
+                    for(int i = 0; i < deck0.size(); i++) {
+                       deck1.add(deck0.get(i));
+                    }
+                    deck0 = new ArrayList<Card>();
+                    turn = !turn;
+                    System.out.println("aaa의 카드 수 : "+deck1.size());
+                    System.out.println("bbb의 카드 수 : "+deck2.size());
+                    System.out.println("깔려 있는 카드 수 :"+deck0.size());
+                 }
+              }
+              else {
+                 isAttack = true;
+                 dropCount = 0;
+                 if(deck2.isEmpty()) {
+                    return;
+                 }
+                 attackCount = checkGameStatus();
+                 turn = !turn;
+              }
+              System.out.println("뽑힌카드 : " +c);
+           }
+        }
+     }
+     public synchronized void doHit(String id) throws RemoteException{
         System.out.println("hit이 실행됨");            //플레이어 구분해서 해야하는데 아직 못함.
         int who = -1;
         for(int i = 0; i < client.size(); i++) {
@@ -397,8 +638,8 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
         else {
            c[0]=deck0.get(deck0.size()-2);
            c[1]=deck0.get(deck0.size()-1);
-           if(c[0].returnType()==c[1].returnType()) {
-              System.out.println("Hit Fail...");
+           if(c[0].returnValue().equals(c[1].returnValue())) {
+              System.out.println("Hit Success...");
               if(who == 1) {
                  for(int j = 0; j < deck0.size();j++) {
                     deck1.add(deck0.get(j));
@@ -415,7 +656,7 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
               }
            }
            else {
-              System.out.println("Hit Fail...");
+              System.out.println("Hit Fail!!!");
               if(who == 1){
                  for(int j = 0; j < deck0.size();j++) {
                     deck2.add(deck0.get(j));
@@ -436,7 +677,10 @@ public class WarGameImpl extends UnicastRemoteObject implements WarGame {
            System.out.println("깔려 있는 카드 수 :"+deck0.size());
            
         }
+        dropCount = 0;
+        isAttack = false;
      }
+     
     public void pop() {
        if(turn==true) {
           deck1.remove(0);

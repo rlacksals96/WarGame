@@ -23,4 +23,6 @@ import java.util.ArrayList;
 	 String getTopType() throws RemoteException;
 	 String getTopValue() throws RemoteException;
 	 boolean getDeckZeroStatus() throws RemoteException;
+	 public void refreshDeck(int who) throws RemoteException;
+	 public int whosWin() throws RemoteException;
 }

@@ -111,6 +111,15 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 //			}
 			try {
 				while(server.checkEndingStatus()){//게임중... 
+					if(!server.checkEndingStatus()) {
+		                  System.out.println("끝남ㅎㅎ");
+		                  server.refreshDeck(server.whosWin());
+		                  gui.deactivatedHitDropBtn();
+		                  gui.setCardNumLabel(0, server.getDeckLength(0));
+		                  gui.setCardNumLabel(1, server.getDeckLength(1));
+		                  gui.getMessageBox(client.get(server.whosWin()-1));
+		                  
+		               }
 //					int deckOneLength=server.getDeckLength(0);//get deck length of player1
 //					int deckTwoLength=server.getDeckLength(1);//get deck length of player2
 					gui.setCardNumLabel(0, server.getDeckLength(0));
@@ -121,6 +130,7 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 					if(server.getDeckZeroStatus()) {
 //						top=server.getTop();
 //						gui.updateCardImg(top.returnType(),top.returnValue());
+//						System.out.println("zeroStatusTrue");
 						String topType=server.getTopType();
 						String topValue=server.getTopValue();
 						gui.updateCardImg(topType, topValue);
@@ -130,6 +140,16 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 						gui.updateCardImg();//아무것도 없는 경우 뒷장 보이게 함
 					}
 					while(id.equals(server.whosTurn())){//자신의 턴 동안...
+						int num = -1;
+		                  for(int i = 0 ; i < client.size(); i++) {
+		                     if(id.equals(client.get(i))) {
+		                        num = i;
+		                        break;
+		                     }
+		                  }
+		                  if(server.getDeckLength(num) == 0 || server.getDeckLength(num) == 52) {
+		                     break;
+		                  }
 						gui.setCardNumLabel(0, server.getDeckLength(0));
 						gui.setCardNumLabel(1,server.getDeckLength(1));
 						
@@ -145,6 +165,8 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 							gui.updateCardImg(topType, topValue);
 //							System.out.println(topType);
 //							System.out.println(topValue);
+						}else {
+							gui.updateCardImg();
 						}
 						boolean_DropBtnStatus=gui.returnDropBtnStatus();
 						boolean_HitBtnStatus=gui.returnHitBtnStatus();
@@ -183,7 +205,11 @@ public class WarGameClient implements Runnable {//handle connection and use rmi 
 				}
 				
 //				gui.deactivatedHitDropBtn();
-			
+				server.refreshDeck(server.whosWin());
+	            gui.setCardNumLabel(0, server.getDeckLength(0));
+	            gui.setCardNumLabel(1, server.getDeckLength(1));
+	            gui.deactivatedHitDropBtn();
+	            gui.getMessageBox(client.get(server.whosWin()-1));
 			}catch(Exception e) {//디테일하게 예외 잡아 줘야 할 듯..예외처리 사이즈가 커
 				e.printStackTrace();
 			}

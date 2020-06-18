@@ -121,6 +121,9 @@ class WarGameBoard extends JPanel{
 		repaint();
 		
 	}
+	void callRepaint() {
+		repaint();
+	}
 	void updateCardImg() {
 		playerCard=new ImageIcon("img/trumpCard/red_back.png");
 		repaint();
@@ -249,7 +252,9 @@ public class WarGameGUI extends JFrame implements ActionListener{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-		
+	public void callRepaint() {
+		board.callRepaint();
+	}
 		//playerLabel[0],[1]
 	public void setCardNumLabel(int p,int num) {
 		board.setCardNumLabel(p, num);
@@ -298,7 +303,9 @@ public class WarGameGUI extends JFrame implements ActionListener{
 		hitBtn.setEnabled(true);
 		dropBtn.setEnabled(true);
 	}
-	
+	public void getMessageBox(String Gid) {
+        JOptionPane.showMessageDialog(null, Gid+"가 승리하였습니다.");
+  }
     public void actionPerformed(ActionEvent ae) {
     	try {
 	    	if(ae.getSource()==dropBtn) {
